@@ -6,18 +6,19 @@ import jakarta.json.bind.annotation.JsonbCreator;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+// ** The canonical constructor is meant for testing (don't use it) ** //
 public record Product (int id, String name, Category category, int rating, LocalDateTime createdAt,
                       LocalDateTime editedAt) {
-    // Above constructor is meant for testing
 
-    // Preferred constructor for creating new products
-    @JsonbCreator // Allows the application to accept this record and use this constructor specific.
+    // ** Preferred constructor for creating new products ** //
+    // Jsonb allows the application to accept this record and use this specific constructor.
+    @JsonbCreator
     public Product(
             @JsonbProperty("id") int id,
             @JsonbProperty("name") String name,
             @JsonbProperty("category") Category category,
-            @JsonbProperty("rating") int rating) {
-        // Always without ms
+            @JsonbProperty("rating") int rating)
+    {
         this(id, name, category, rating, LocalDateTime.now().withNano(0), LocalDateTime.now().withNano(0));
     }
 
