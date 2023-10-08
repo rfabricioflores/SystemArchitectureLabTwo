@@ -14,7 +14,6 @@ import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Pro
 import se.fabricioflores.systemarchitecturelabtwo.util.ErrorEntity;
 import se.fabricioflores.systemarchitecturelabtwo.util.DataEntity;
 
-
 import static jakarta.ws.rs.core.Response.Status.*;
 
 @Path("/product")
@@ -54,7 +53,6 @@ public class ProductResource {
     }
 
     @GET
-    @Path("/")
     public Response getAllProducts() {
         var products = warehouse.getAllProducts();
 
