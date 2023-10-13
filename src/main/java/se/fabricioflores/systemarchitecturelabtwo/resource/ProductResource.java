@@ -1,13 +1,16 @@
 package se.fabricioflores.systemarchitecturelabtwo.resource;
 
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
+import se.fabricioflores.systemarchitecturelabtwo.interceptor.Log;
 import se.fabricioflores.systemarchitecturelabtwo.service.RequestResponse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.Warehouse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
@@ -16,6 +19,7 @@ import se.fabricioflores.systemarchitecturelabtwo.util.DataEntity;
 
 import static jakarta.ws.rs.core.Response.Status.*;
 
+@Log
 @Path("/product")
 @Produces("application/json")
 @Consumes("application/json")
@@ -42,7 +46,7 @@ public class ProductResource {
 
     @GET
     @Path("/{id}")
-    public Response getProduct(@PathParam("id") @NotNull int productId) {
+    public Response getProduct(@PathParam("id") @Valid @PositiveOrZero int productId) {
         warehouse.getProductByID(productId).ifPresentOrElse(product -> {
             response.status(OK).entity(new DataEntity(product, "Found product successfully!"));
         }, () -> {
@@ -63,12 +67,12 @@ public class ProductResource {
     }
 
     @POST
-    public Response addProduct(@NotNull Product product) {
+    public Response addProduct(@Valid Product product) {
         try {
             warehouse.addProduct(product);
             response
                     .status(OK)
-                    .entity(new DataEntity(product, "Product added successfully!"));
+                    .entity(new DataEntity(product, "Product created successfully!"));
         } catch (IllegalArgumentException e) {
             response
                     .status(NOT_ACCEPTABLE)
