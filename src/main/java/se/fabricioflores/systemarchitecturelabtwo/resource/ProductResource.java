@@ -2,8 +2,6 @@ package se.fabricioflores.systemarchitecturelabtwo.resource;
 
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.PositiveOrZero;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.Response;
@@ -13,6 +11,7 @@ import jakarta.ws.rs.core.UriInfo;
 import se.fabricioflores.systemarchitecturelabtwo.interceptor.Log;
 import se.fabricioflores.systemarchitecturelabtwo.service.RequestResponse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.Warehouse;
+import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Category;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
 import se.fabricioflores.systemarchitecturelabtwo.util.ErrorEntity;
 import se.fabricioflores.systemarchitecturelabtwo.util.DataEntity;
@@ -45,8 +44,19 @@ public class ProductResource {
     }
 
     @GET
+    @Path("/")
+    public Response getAllProducts() {
+        var products = warehouse.getAllProducts();
+
+        return response
+                .status(OK)
+                .entity(new DataEntity(products, "Retrieved products successfully"))
+                .build();
+    }
+
+    @GET
     @Path("/{id}")
-    public Response getProduct(@PathParam("id") @Valid @PositiveOrZero int productId) {
+    public Response getProductById(@PathParam("id") int productId) {
         warehouse.getProductByID(productId).ifPresentOrElse(product -> {
             response.status(OK).entity(new DataEntity(product, "Found product successfully!"));
         }, () -> {
@@ -57,13 +67,27 @@ public class ProductResource {
     }
 
     @GET
-    public Response getAllProducts() {
-        var products = warehouse.getAllProducts();
+    @Path("/category/{name}")
+    public Response getProductByCategory(@PathParam("name") String category) {
+        try {
+            Category categoryEnum = Category.valueOf(category.toUpperCase());
+            var products = warehouse.getProductsByCategorySortedByName(categoryEnum);
+            if(products.isEmpty()) {
+                response
+                        .status(NOT_FOUND)
+                        .entity(new DataEntity(products, "Could not find products with the category " + category));
+            } else {
+                response
+                        .status(OK)
+                        .entity(new DataEntity(products, "Retrieved products successfully!"));
+            }
+        } catch (IllegalArgumentException e) {
+            response
+                    .status(NOT_ACCEPTABLE)
+                    .entity(new ErrorEntity("Not valid category", getPath()));
+        }
 
-        return response
-                .status(OK)
-                .entity(new DataEntity(products, "Retrieved products successfully"))
-                .build();
+        return response.build();
     }
 
     @POST
