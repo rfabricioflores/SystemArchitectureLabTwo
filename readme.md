@@ -19,3 +19,14 @@ body:
     "category": "TECH"
 }
 ```
+
+`PUT` `/api/product` - Updates a product.
+```jsonc
+body:
+{
+    "id":  1,
+    "name":  "Mac",
+    "rating": 7,
+    "category": "TECH"
+}
+```
