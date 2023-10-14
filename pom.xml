@@ -17,6 +17,9 @@
 
         <junit.version>5.9.2</junit.version>
         <assertj.core.version>3.24.2</assertj.core.version>
+        <mockito.version>5.5.0</mockito.version>
+        <resteasy.core.version>6.2.4.Final</resteasy.core.version>
+        <resteasy.jackson2.version>6.2.5.Final</resteasy.jackson2.version>
     </properties>
 
     <dependencies>
@@ -80,6 +83,24 @@
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
             <version>${assertj.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-junit-jupiter</artifactId>
+            <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-core</artifactId>
+            <version>${resteasy.core.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.resteasy</groupId>
+            <artifactId>resteasy-jackson2-provider</artifactId>
+            <version>${resteasy.jackson2.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
