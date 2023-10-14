@@ -91,12 +91,30 @@ public class ProductResource {
     }
 
     @POST
+    @Path("/")
     public Response addProduct(@Valid Product product) {
         try {
             warehouse.addProduct(product);
             response
                     .status(OK)
                     .entity(new DataEntity(product, "Product created successfully!"));
+        } catch (IllegalArgumentException e) {
+            response
+                    .status(NOT_ACCEPTABLE)
+                    .entity(new ErrorEntity(e.getMessage(), getPath()));
+        }
+
+        return response.build();
+    }
+
+    @PUT
+    @Path("/")
+    public Response editProduct(@Valid Product product) {
+        try {
+            var modifiedProduct = warehouse.editProduct(product.id(), product.name(), product.category(), product.rating());
+            response
+                    .status(ACCEPTED)
+                    .entity(new DataEntity(modifiedProduct, "Product edited successfully"));
         } catch (IllegalArgumentException e) {
             response
                     .status(NOT_ACCEPTABLE)

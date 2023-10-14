@@ -10,6 +10,7 @@ import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Pro
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 @Singleton
@@ -19,32 +20,38 @@ public class Warehouse {
 
     @Lock(LockType.WRITE)
     public void addProduct(Product product) {
-            if (product.name().isEmpty()) throw new IllegalArgumentException("Name field can't be empty");
-            if (product.rating() > 10 || product.rating() < 1) throw new IllegalArgumentException("Rating must be between 1 and 10");
-            if (productList.contains(product)) throw new IllegalArgumentException("Another product with this id already exists");
-            productList.add(product);
+        if (product.name().isEmpty()) throw new IllegalArgumentException("Name field can't be empty");
+        if (product.rating() > 10 || product.rating() < 1) throw new IllegalArgumentException("Rating must be between 1 and 10");
+        if (productList.contains(product)) throw new IllegalArgumentException("Another product with this id already exists");
+        productList.add(product);
     }
 
     @Lock(LockType.WRITE)
-    public void editProduct(int id, String name, Category category, int rating) {
-            if (name.isEmpty()) throw new IllegalArgumentException("Name field can't be empty");
-            if (rating > 10 || rating < 1) throw new IllegalArgumentException("Rating must be between 1 and 10");
-            if (category == null) throw new IllegalArgumentException("Category field can't be null");
+    public Optional<Product> editProduct(int id, String name, Category category, int rating) {
+        if (name.isEmpty()) throw new IllegalArgumentException("Name field can't be empty");
+        if (rating > 10 || rating < 1) throw new IllegalArgumentException("Rating must be between 1 and 10");
+        if (category == null) throw new IllegalArgumentException("Category field can't be null");
 
-            var optionalProduct = productList.stream().filter(p -> p.id() == id).findFirst();
+        var optionalProductToEdit = productList.stream().filter(p -> p.id() == id).findFirst();
 
-            optionalProduct.ifPresent(product -> {
-                Product editedProduct = new Product(
-                        product.id(),
-                        name,
-                        category,
-                        rating,
-                        product.createdAt(),
-                        LocalDateTime.now()
-                );
-                productList.remove(product);
-                productList.add(editedProduct);
-            });
+        if(optionalProductToEdit.isPresent()) {
+            Product productToEdit = optionalProductToEdit.get();
+            Product modifiedProduct = new Product(
+                    productToEdit.id(),
+                    name,
+                    category,
+                    rating,
+                    productToEdit.createdAt(),
+                    LocalDateTime.now()
+            );
+
+            productList.remove(productToEdit);
+            productList.add(modifiedProduct);
+
+            return Optional.of(modifiedProduct);
+        }
+
+        return Optional.empty();
     }
 
     @Lock(LockType.READ)

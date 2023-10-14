@@ -69,15 +69,14 @@ public class WarehouseTest {
         var product = new Product(1, "Product One", Category.SPORT, 2);
         warehouse.addProduct(product);
 
-        warehouse.editProduct(1, "Edited Product", Category.TECH, 3);
+        var optionalModifiedProduct = warehouse.editProduct(1, "Edited Product", Category.TECH, 3);
 
-        var optionalProduct = warehouse.getProductByID(1);
-        assertThat(optionalProduct).isPresent();
+        assertThat(optionalModifiedProduct).isPresent();
 
-        var updatedProduct = optionalProduct.get();
-        assertThat(updatedProduct.name()).isEqualTo("Edited Product");
-        assertThat(updatedProduct.category()).isEqualTo(Category.TECH);
-        assertThat(updatedProduct.rating()).isEqualTo(3);
+        var modifiedProduct = optionalModifiedProduct.get();
+        assertThat(modifiedProduct.name()).isEqualTo("Edited Product");
+        assertThat(modifiedProduct.category()).isEqualTo(Category.TECH);
+        assertThat(modifiedProduct.rating()).isEqualTo(3);
     }
 
     @Test
