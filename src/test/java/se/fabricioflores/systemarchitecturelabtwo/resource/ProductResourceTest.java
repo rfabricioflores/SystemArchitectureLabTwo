@@ -1,6 +1,8 @@
 package se.fabricioflores.systemarchitecturelabtwo.resource;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
@@ -16,6 +18,7 @@ import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.IWarehouse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.Warehouse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Category;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
+import se.fabricioflores.systemarchitecturelabtwo.util.DataEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -27,9 +30,16 @@ public class ProductResourceTest {
 
     Dispatcher dispatcher;
 
+    ObjectMapper objectMapper;
+
     @BeforeEach
     public void setup() {
         warehouse = new Warehouse();
+
+        objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+
         dispatcher = MockDispatcherFactory.createDispatcher();
         var productResource = new ProductResource(warehouse);
         dispatcher.getRegistry().addSingletonResource(productResource);
@@ -53,23 +63,26 @@ public class ProductResourceTest {
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
 
+        var responseContent = objectMapper.readValue(response.getContentAsString(), DataEntity.class);
+
+        // some logic here to check response content equals to product
+
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
-//    ** For some shitty reason this doesn't work ** \\
-//    @Test
-//    void testAddProductRespondsWithStatus201() throws Exception {
-//        MockHttpRequest request = MockHttpRequest.post("/product");
-//        MockHttpResponse response = new MockHttpResponse();
-//
-//        Product productToBeCreated = new Product(1, "Mac", Category.TECH, 8);
-//        String json = new ObjectMapper().writeValueAsString(productToBeCreated);
-//
-//        request.contentType("application/json");
-//        request.content(json.getBytes());
-//
-//        dispatcher.invoke(request, response);
-//
-//        assertThat(response.getStatus()).isEqualTo(201);
-//    }
+    @Test
+    void testAddProductRespondsWithStatus201() throws Exception {
+        MockHttpRequest request = MockHttpRequest.post("/product");
+        MockHttpResponse response = new MockHttpResponse();
+
+        Product productToBeCreated = new Product(1, "Mac", Category.TECH, 8);
+        String json = objectMapper.writeValueAsString(productToBeCreated);
+
+        request.contentType("application/json");
+        request.content(json.getBytes());
+
+        dispatcher.invoke(request, response);
+
+        assertThat(response.getStatus()).isEqualTo(201);
+    }
 }

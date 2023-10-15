@@ -14,7 +14,6 @@ public class ObjectMapperContextResolver implements ContextResolver<ObjectMapper
         this.mapper = new ObjectMapper();
         this.mapper.registerModule(new JavaTimeModule());
         this.mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
-//        this.mapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
     }
 
     @Override
