@@ -11,6 +11,7 @@ public class ProductAdapter implements JsonbAdapter<Product, JsonObject> {
         return null;
     }
 
+    // ** Converts category to uppercase before it creates a new instance of product ** \\
     @Override
     public Product adaptFromJson(JsonObject adapted) {
         var id = adapted.getInt("id");

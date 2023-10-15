@@ -50,10 +50,15 @@ public class ProductResource {
     public Response getAllProducts() {
         var products = warehouse.getAllProducts();
 
-        return response
-                .status(OK)
-                .entity(new DataEntity(products, "Retrieved products successfully"))
-                .build();
+        if(products.isEmpty()) {
+            response.status(NOT_FOUND)
+                    .entity(new DataEntity(products, "No products yet"));
+        } else {
+            response.status(OK)
+                    .entity(new DataEntity(products, "Retrieved products successfully"));
+        }
+
+        return response.build();
     }
 
     @GET
@@ -98,7 +103,7 @@ public class ProductResource {
         try {
             warehouse.addProduct(product);
             response
-                    .status(OK)
+                    .status(CREATED)
                     .entity(new DataEntity(product, "Product created successfully!"));
         } catch (IllegalArgumentException e) {
             response
