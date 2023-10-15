@@ -16,7 +16,7 @@ body:
     "id":  1,
     "name":  "Mac",
     "rating": 7,
-    "category": "TECH"
+    "category": "tech"
 }
 ```
 
@@ -25,8 +25,8 @@ body:
 body:
 {
     "id":  1,
-    "name":  "Mac",
+    "name":  "Ring",
     "rating": 7,
-    "category": "TECH"
+    "category": "jewelry"
 }
 ```
