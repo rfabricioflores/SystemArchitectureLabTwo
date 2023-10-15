@@ -10,7 +10,7 @@ import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import se.fabricioflores.systemarchitecturelabtwo.interceptor.Log;
-import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.WarehouseService;
+import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.IWarehouse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Category;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
 import se.fabricioflores.systemarchitecturelabtwo.util.ErrorEntity;
@@ -24,7 +24,7 @@ import static jakarta.ws.rs.core.Response.Status.*;
 @Consumes("application/json")
 public class ProductResource {
 
-    private WarehouseService warehouse;
+    private IWarehouse warehouse;
 
     @RequestScoped
     private final ResponseBuilder response = Response.notModified();
@@ -33,7 +33,7 @@ public class ProductResource {
     private UriInfo uriInfo;
 
     @Inject
-    public ProductResource(WarehouseService warehouse) {
+    public ProductResource(IWarehouse warehouse) {
         this.warehouse = warehouse;
     }
 

@@ -10,7 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import se.fabricioflores.systemarchitecturelabtwo.exception.ExceptionMapper;
-import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.WarehouseService;
+import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.IWarehouse;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProductResourceTest {
 
     @Mock
-    WarehouseService warehouse;
+    IWarehouse warehouse;
 
     Dispatcher dispatcher;
 

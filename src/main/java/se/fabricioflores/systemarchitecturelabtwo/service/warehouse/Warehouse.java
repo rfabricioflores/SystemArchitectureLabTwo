@@ -12,7 +12,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
-public class Warehouse implements WarehouseService {
+public class Warehouse implements IWarehouse {
     private final List<Product> productList = new ArrayList<>();
 
     @Lock(LockType.WRITE)

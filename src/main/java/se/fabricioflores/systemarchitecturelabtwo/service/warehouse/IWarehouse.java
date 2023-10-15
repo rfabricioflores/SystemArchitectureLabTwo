@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Singleton
-public interface WarehouseService {
+public interface IWarehouse {
     void addProduct(Product product);
     Optional<Product> editProduct(int id, String name, Category category, int rating);
     List<Product> getAllProducts();
