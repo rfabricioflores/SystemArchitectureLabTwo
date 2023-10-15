@@ -118,10 +118,11 @@ public class ProductResource {
                 response
                         .status(ACCEPTED)
                         .entity(new DataEntity(modifiedProduct, "Product edited successfully"));
+            } else {
+                response
+                        .status(NOT_ACCEPTABLE)
+                        .entity(new ErrorEntity("Invalid product id", getPath()));
             }
-            response
-                    .status(NOT_ACCEPTABLE)
-                    .entity(new ErrorEntity("Invalid product id", getPath()));
         } catch (IllegalArgumentException e) {
             response
                     .status(NOT_ACCEPTABLE)

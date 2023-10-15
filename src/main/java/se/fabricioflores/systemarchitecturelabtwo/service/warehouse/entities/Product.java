@@ -3,11 +3,14 @@ package se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities;
 import jakarta.json.bind.annotation.JsonbProperty;
 import jakarta.json.bind.annotation.JsonbCreator;
 import jakarta.json.bind.annotation.JsonbPropertyOrder;
+import jakarta.json.bind.annotation.JsonbTypeAdapter;
 import jakarta.validation.constraints.*;
+import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.adapter.ProductAdapter;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 
+@JsonbTypeAdapter(ProductAdapter.class)
 @JsonbPropertyOrder({
         "id",
         "name",

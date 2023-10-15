@@ -17,14 +17,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class ProductResourceTest {
 
     @Mock
-    WarehouseService warehouseService;
+    WarehouseService warehouse;
 
     Dispatcher dispatcher;
 
     @BeforeEach
     public void setup() {
         dispatcher = MockDispatcherFactory.createDispatcher();
-        var productResource = new ProductResource(warehouseService);
+        var productResource = new ProductResource(warehouse);
         dispatcher.getRegistry().addSingletonResource(productResource);
     }
 
@@ -32,7 +32,6 @@ public class ProductResourceTest {
     public void testSomething() throws Exception {
         MockHttpRequest request = MockHttpRequest.get("/product");
         MockHttpResponse response = new MockHttpResponse();
-
         dispatcher.invoke(request, response);
 
         assertThat(200).isEqualTo(response.getStatus());
