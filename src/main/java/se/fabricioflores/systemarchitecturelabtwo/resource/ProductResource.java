@@ -1,5 +1,6 @@
 package se.fabricioflores.systemarchitecturelabtwo.resource;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -9,8 +10,7 @@ import jakarta.ws.rs.core.Response.ResponseBuilder;
 import jakarta.ws.rs.core.UriBuilder;
 import jakarta.ws.rs.core.UriInfo;
 import se.fabricioflores.systemarchitecturelabtwo.interceptor.Log;
-import se.fabricioflores.systemarchitecturelabtwo.service.RequestResponse;
-import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.Warehouse;
+import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.WarehouseService;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Category;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
 import se.fabricioflores.systemarchitecturelabtwo.util.ErrorEntity;
@@ -24,15 +24,17 @@ import static jakarta.ws.rs.core.Response.Status.*;
 @Consumes("application/json")
 public class ProductResource {
 
-    private Warehouse warehouse;
-    private ResponseBuilder response;
+    private WarehouseService warehouse;
 
-    @Context private UriInfo uriInfo;
+    @RequestScoped
+    private final ResponseBuilder response = Response.notModified();
+
+    @Context
+    private UriInfo uriInfo;
 
     @Inject
-    public ProductResource(Warehouse warehouse, RequestResponse requestResponse) {
+    public ProductResource(WarehouseService warehouse) {
         this.warehouse = warehouse;
-        this.response = requestResponse.getRes();
     }
 
     public ProductResource() {}
@@ -112,9 +114,14 @@ public class ProductResource {
     public Response editProduct(@Valid Product product) {
         try {
             var modifiedProduct = warehouse.editProduct(product.id(), product.name(), product.category(), product.rating());
+            if(modifiedProduct.isPresent()) {
+                response
+                        .status(ACCEPTED)
+                        .entity(new DataEntity(modifiedProduct, "Product edited successfully"));
+            }
             response
-                    .status(ACCEPTED)
-                    .entity(new DataEntity(modifiedProduct, "Product edited successfully"));
+                    .status(NOT_ACCEPTABLE)
+                    .entity(new ErrorEntity("Invalid product id", getPath()));
         } catch (IllegalArgumentException e) {
             response
                     .status(NOT_ACCEPTABLE)

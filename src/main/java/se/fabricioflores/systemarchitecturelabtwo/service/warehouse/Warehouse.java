@@ -1,7 +1,6 @@
 package se.fabricioflores.systemarchitecturelabtwo.service.warehouse;
 
 import jakarta.ejb.Lock;
-import jakarta.ejb.Singleton;
 import jakarta.ejb.LockType;
 import jakarta.enterprise.context.ApplicationScoped;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Category;
@@ -10,12 +9,10 @@ import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Pro
 import java.time.LocalDateTime;
 import java.time.YearMonth;
 import java.util.*;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
-@Singleton
 @ApplicationScoped
-public class Warehouse {
+public class Warehouse implements WarehouseService {
     private final List<Product> productList = new ArrayList<>();
 
     @Lock(LockType.WRITE)
