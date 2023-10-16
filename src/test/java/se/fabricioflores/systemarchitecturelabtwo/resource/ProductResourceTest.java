@@ -140,13 +140,39 @@ public class ProductResourceTest {
                         new TypeReference<>() {}
                 );
 
-        System.out.println(productListReceived);
-
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(productListReceived.size()).isEqualTo(2);
         productListReceived.forEach(product -> {
             assertThat(product.category()).isEqualTo(Category.TECH);
         });
         assertThat(meta.message).isEqualTo("Retrieved products successfully!");
+    }
+
+    @Test
+    void testEditProductNameRespondsWithUpdatedProduct() throws Exception {
+        warehouse.addProduct(new Product(1, "Net", Category.SPORT, 4));
+        MockHttpRequest request = MockHttpRequest.put("/product/");
+        MockHttpResponse response = new MockHttpResponse();
+
+        Product productModification = new Product(1, "Flying disc", Category.SPORT, 4);
+        String requestBody = objectMapper.writeValueAsString(productModification);
+
+        request.contentType("application/json");
+        request.content(requestBody.getBytes());
+
+        dispatcher.invoke(request, response);
+
+        DataEntity payload = objectMapper.readValue(response.getContentAsString(), DataEntity.class);
+        DataMeta meta = payload.meta;
+        Object data = payload.data;
+
+        Product modifiedProduct = objectMapper.readValue(
+                objectMapper.writeValueAsString(data),
+                Product.class);
+
+        assertThat(response.getStatus()).isEqualTo(202);
+        assertThat(meta.message).isEqualTo("Product edited successfully");
+        assertThat(modifiedProduct.name()).isEqualTo("Flying disc");
+
     }
 }
