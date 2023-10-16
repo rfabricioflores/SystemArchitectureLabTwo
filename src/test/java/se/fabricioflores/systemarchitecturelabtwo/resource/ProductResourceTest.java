@@ -3,7 +3,6 @@ package se.fabricioflores.systemarchitecturelabtwo.resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import jakarta.json.bind.JsonbBuilder;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
@@ -92,5 +91,28 @@ public class ProductResourceTest {
         assertThat(response.getStatus()).isEqualTo(201);
         assertThat(productToBeCreated).isEqualTo(productCreated);
         assertThat(meta.message).isEqualTo("Product created successfully!");
+    }
+
+    @Test
+    void testGetProductByIdRespondsWithProductAndCorrectMessage() throws Exception {
+        warehouse.addProduct(new Product(1, "Neckless", Category.JEWELRY, 9));
+        var product = warehouse.getProductByID(1).orElseThrow();
+
+        MockHttpRequest request = MockHttpRequest.get("/product/1");
+        MockHttpResponse response = new MockHttpResponse();
+
+        dispatcher.invoke(request, response);
+
+        DataEntity payload = objectMapper.readValue(response.getContentAsString(), DataEntity.class);
+        DataMeta meta = payload.meta;
+        Object data = payload.data;
+
+        Product productReceived = objectMapper.readValue(
+                objectMapper.writeValueAsString(data),
+                Product.class);
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(productReceived).isEqualTo(product);
+        assertThat(meta.message).isEqualTo("Found product successfully!");
     }
 }
