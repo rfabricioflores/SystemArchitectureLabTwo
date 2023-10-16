@@ -1,5 +1,6 @@
 package se.fabricioflores.systemarchitecturelabtwo.resource;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
@@ -20,6 +21,8 @@ import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Cat
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
 import se.fabricioflores.systemarchitecturelabtwo.util.DataEntity;
 import se.fabricioflores.systemarchitecturelabtwo.util.DataMeta;
+
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -114,5 +117,36 @@ public class ProductResourceTest {
         assertThat(response.getStatus()).isEqualTo(200);
         assertThat(productReceived).isEqualTo(product);
         assertThat(meta.message).isEqualTo("Found product successfully!");
+    }
+    
+    @Test
+    void testGetProductsByCategoryTechRespondsWithProductListWithCorrectCategory() throws Exception {
+        warehouse.addProduct(new Product(1, "Mouse", Category.TECH, 3));
+        warehouse.addProduct(new Product(2, "Keyboard", Category.TECH, 7));
+        warehouse.addProduct(new Product(3, "Neckless", Category.JEWELRY, 9));
+
+        MockHttpRequest request = MockHttpRequest.get("/product/category/tech");
+        MockHttpResponse response = new MockHttpResponse();
+
+        dispatcher.invoke(request, response);
+
+        DataEntity payload = objectMapper.readValue(response.getContentAsString(), DataEntity.class);
+        DataMeta meta = payload.meta;
+        Object data = payload.data;
+
+        List<Product> productListReceived = objectMapper.readValue
+                (
+                        objectMapper.writeValueAsString(data),
+                        new TypeReference<>() {}
+                );
+
+        System.out.println(productListReceived);
+
+        assertThat(response.getStatus()).isEqualTo(200);
+        assertThat(productListReceived.size()).isEqualTo(2);
+        productListReceived.forEach(product -> {
+            assertThat(product.category()).isEqualTo(Category.TECH);
+        });
+        assertThat(meta.message).isEqualTo("Retrieved products successfully!");
     }
 }

@@ -75,7 +75,7 @@ public class ProductResource {
 
     @GET
     @Path("/category/{name}")
-    public Response getProductByCategory(@PathParam("name") String category) {
+    public Response getProductsByCategory(@PathParam("name") String category) {
         try {
             Category categoryEnum = Category.valueOf(category.toUpperCase());
             var products = warehouse.getProductsByCategorySortedByName(categoryEnum);
