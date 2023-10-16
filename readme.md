@@ -30,3 +30,7 @@ body:
     "category": "jewelry"
 }
 ```
+
+### Info
+The server will always respond with a json that contains a "meta" object with information about the request.
+The json could also contain a "data" object if you are requesting data.
