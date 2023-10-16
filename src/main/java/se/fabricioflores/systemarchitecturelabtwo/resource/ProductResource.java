@@ -122,7 +122,7 @@ public class ProductResource {
             if(modifiedProduct.isPresent()) {
                 response
                         .status(ACCEPTED)
-                        .entity(new DataEntity(modifiedProduct, "Product edited successfully"));
+                        .entity(new DataEntity(modifiedProduct.get(), "Product edited successfully"));
             } else {
                 response
                         .status(NOT_ACCEPTABLE)
