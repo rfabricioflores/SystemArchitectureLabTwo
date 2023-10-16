@@ -3,6 +3,7 @@ package se.fabricioflores.systemarchitecturelabtwo.resource;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import jakarta.json.bind.JsonbBuilder;
 import org.jboss.resteasy.mock.MockDispatcherFactory;
 import org.jboss.resteasy.mock.MockHttpRequest;
 import org.jboss.resteasy.mock.MockHttpResponse;
@@ -19,6 +20,7 @@ import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.Warehouse;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Category;
 import se.fabricioflores.systemarchitecturelabtwo.service.warehouse.entities.Product;
 import se.fabricioflores.systemarchitecturelabtwo.util.DataEntity;
+import se.fabricioflores.systemarchitecturelabtwo.util.DataMeta;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -63,15 +65,11 @@ public class ProductResourceTest {
         MockHttpResponse response = new MockHttpResponse();
         dispatcher.invoke(request, response);
 
-        var responseContent = objectMapper.readValue(response.getContentAsString(), DataEntity.class);
-
-        // some logic here to check response content equals to product
-
         assertThat(response.getStatus()).isEqualTo(200);
     }
 
     @Test
-    void testAddProductRespondsWithStatus201() throws Exception {
+    void testAddProductRespondsWithStatus201AndCorrectDataAndMessage() throws Exception {
         MockHttpRequest request = MockHttpRequest.post("/product");
         MockHttpResponse response = new MockHttpResponse();
 
@@ -83,6 +81,16 @@ public class ProductResourceTest {
 
         dispatcher.invoke(request, response);
 
+        DataEntity payload = objectMapper.readValue(response.getContentAsString(), DataEntity.class);
+        DataMeta meta = payload.meta;
+        Object data = payload.data;
+
+        Product productCreated = objectMapper.readValue(
+                objectMapper.writeValueAsString(data),
+                Product.class);
+
         assertThat(response.getStatus()).isEqualTo(201);
+        assertThat(productToBeCreated).isEqualTo(productCreated);
+        assertThat(meta.message).isEqualTo("Product created successfully!");
     }
 }

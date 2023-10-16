@@ -1,16 +1,14 @@
 package se.fabricioflores.systemarchitecturelabtwo.util;
 
-import java.time.LocalDateTime;
-
 public class DataEntity {
+    public DataMeta meta;
+    public Object data;
+
     public DataEntity(Object data, String info) {
-        this.meta = new Object() {
-            public final String message = info;
-            public final LocalDateTime timestamp = LocalDateTime.now();
-        };
+        this.meta = new DataMeta(info);
         this.data = data;
     }
 
-    public Object meta;
-    public Object data;
+    public DataEntity() {}
 }
+
