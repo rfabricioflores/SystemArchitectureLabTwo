@@ -1,5 +1,5 @@
 # Step 1 compile java code to war
-FROM maven:3.9.4-eclipse-temurin-17-alpine as build
+FROM maven:3.9.4-eclipse-temurin-17 as build
 
 WORKDIR /home/app
 
