@@ -16,10 +16,11 @@ jobs:
         uses: actions/setup-java@v3
         with:
           java-version: '17'
+          distribution: 'adopt'
           cache: maven
 
       - name: Run tests
-        uses: mvn -B verify --file pom.xml
+        run: mvn -B verify --file pom.xml
 
       # Setup Docker build & publish action
       - name: Set up QEMU
@@ -42,4 +43,4 @@ jobs:
           file: ./Dockerfile
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: {{ secrets.DOCKERHUB_USERNAME }}/wildfly:latest
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/wildfly:latest
